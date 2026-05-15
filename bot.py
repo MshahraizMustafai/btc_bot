@@ -1,17 +1,15 @@
 import os
 import logging
-import feedparser
 import requests
+import xml.etree.ElementTree as ET
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import pytz
 
-# ===== APNA TOKEN YAHAN DAALO =====
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
-# ==================================
 
-CHAT_IDS = []  # Auto save hoga
+CHAT_IDS = []
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -53,17 +51,19 @@ def get_fear_greed():
 
 # ============ BTC NEWS ============
 def get_btc_news():
+    news_list = []
     feeds = [
         "https://cointelegraph.com/rss/tag/bitcoin",
         "https://coindesk.com/arc/outboundfeeds/rss/",
     ]
-    news_list = []
     for url in feeds:
         try:
-            feed = feedparser.parse(url)
-            for entry in feed.entries[:3]:
-                title = entry.title
-                link = entry.link
+            r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+            root = ET.fromstring(r.content)
+            items = root.findall(".//item")
+            for item in items[:3]:
+                title = item.find("title").text
+                link = item.find("link").text
                 news_list.append(f"📰 [{title}]({link})")
             if len(news_list) >= 5:
                 break
