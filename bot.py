@@ -1,3 +1,4 @@
+import os
 import logging
 import feedparser
 import requests
@@ -7,7 +8,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import pytz
 
 # ===== APNA TOKEN YAHAN DAALO =====
-BOT_TOKEN = "8942862785:AAHamtl7C2qz2iGISY9qKmmQnxF63xAYYX8"
+BOT_TOKEN = os.environ.get(8942862785:AAHamtl7C2qz2iGISY9qKmmQnxF63xAYYX8)
 # ==================================
 
 CHAT_IDS = []  # Auto save hoga
